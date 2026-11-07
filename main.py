@@ -5,62 +5,47 @@ from dotenv import load_dotenv
 load_dotenv()
 ACCOUNT_ID = os.getenv("DOTA_ACCOUNT_ID")
 
-r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/recentMatches')
-q = requests.get('https://api.opendota.com/api/heroes')
-
 if not ACCOUNT_ID:
     raise ValueError("DOTA_ACCOUNT_ID не найден в .env")
+
+def request_check(resp):
+    if not resp.ok:
+        raise SystemExit(f"Exeption: {resp.status_code}")
+try:
+    r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/recentMatches', timeout=10)
+    q = requests.get('https://api.opendota.com/api/heroes', timeout=10)
+except requests.exceptions.RequestException as e: 
+    raise SystemExit(f"Network error: {e}")
+
+request_check(r)
+request_check(q)
+
+
 
 matches = r.json()
 heroes = q.json()
 
 
-#TODO 
-# fix radiant/dire (if player in slot 128 - game doesnt count)xdd -> full rewrite the logic: first determin radiant/dire, then - win/lose
-# add hero to best/worst kda
-# add avg kda
 
+# check win\lose
+def is_radiant(match):
+    return match['player_slot'] < 128
 
-# len(matches)
-
-# player slot <128 - radiant, >128 - dire
-
-# for match in matches:
-#     if match['player_slot'] <128:
-#         if match['radiant_win']:
-#             print(f'match_id: {match["match_id"]} - win')
-#         else:
-#             print(f'match_id: {match["match_id"]} - lose')
-#     if match['player_slot'] >128:
-#         if match['radiant_win']:
-#             print(f'match_id: {match["match_id"]} - lose')
-#         else:
-#             print(f'match_id: {match["match_id"]} - win')
-
+def is_win(match):
+    return is_radiant(match) == match['radiant_win']
 
 def count_wr():
-    win = 0
-    
-    for match in matches:
-        if match['player_slot'] <128:
-            if match['radiant_win']:
-                win = win + 1
-            else:
-                pass
-        if match['player_slot'] >128:
-            if match['radiant_win']:
-                pass
-            else:
-                win= win + 1
-
-
-    wr = win / len(matches) * 100
-    return wr
+    if not matches:
+        return 0
+    wins = sum(is_win(m) for m in matches)
+    return wins/ len(matches) * 100
 
 print(f"Winrate: {count_wr():.2f}%")
 
+
+# count KDA
 def count_kd(match):
-    kda = (match['kills'] + match['assists']) / match['deaths', 1]
+    kda = (match['kills'] + match['assists']) / max(match['deaths'], 1)
 
     return kda
 
@@ -69,25 +54,32 @@ for match in matches:
 
 best_match = max(matches, key=count_kd)
 # print(best_match)
+heroes_by_id = {hero['id']: hero for hero in heroes}
+hero = heroes_by_id.get(match['hero_id'])
 
-print(f'Best KDA - {count_kd(best_match):.2f}')
+print(f'Best KDA - {hero['localized_name']} - {count_kd(best_match):.2f}')
 
 worst_match = min(matches, key = count_kd)
 
-print(f'Worst KDA - {count_kd(worst_match):.2f}')
+print(f'Worst KDA - {hero['localized_name']} - {count_kd(worst_match):.2f}')
 
 def avg_time():
     return sum(match['duration'] for match in matches) / len(matches)
+
+
+
+print(f"Average KDA - { (count_kd(best_match) + count_kd(worst_match)) /2 :.2f}")
 
 minutes, seconds = divmod(round(avg_time()), 60)
 
 # print(minutes)
 # print(seconds)
 
-print(f" Avg match time - {minutes}:{seconds:02d} min")
+print(f"Avg match time - {minutes}:{seconds:02d} min")
 
-heroes_by_id = {hero['id']: hero for hero in heroes}
 
+print("HERO K D A")
 for match in matches:
-    hero = heroes_by_id.get(match['hero_id'])
     print(hero['localized_name'], match['kills'], match['deaths'], match['assists'])
+
+
