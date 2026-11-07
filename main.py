@@ -10,7 +10,7 @@ if not ACCOUNT_ID:
 
 def request_check(resp):
     if not resp.ok:
-        raise SystemExit(f"Exeption: {resp.status_code}")
+        raise SystemExit(f"Exception: {resp.status_code}")
 try:
     r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/recentMatches', timeout=10)
     q = requests.get('https://api.opendota.com/api/heroes', timeout=10)
@@ -43,6 +43,26 @@ def count_wr():
 print(f"Winrate: {count_wr():.2f}%")
 
 
+
+def wr_side(radiant):
+    if not matches:
+        return 0
+
+    if radiant:
+        wr = sum(is_win(m) and is_radiant(m) for m in matches)
+        return wr/sum(is_radiant(m) for m in matches) * 100
+    else:
+        wr = sum(is_win(m) and not is_radiant(m) for m in matches)
+        return wr/sum(not is_radiant(m) for m in matches) * 100
+
+
+print(f"Radiant wr: {wr_side(True):.2f}%")
+print(f"Dire wr: {wr_side(False):.2f}%")
+
+
+        
+
+
 # count KDA
 def count_kd(match):
     kda = (match['kills'] + match['assists']) / max(match['deaths'], 1)
@@ -66,9 +86,10 @@ print(f'Worst KDA - {hero['localized_name']} - {count_kd(worst_match):.2f}')
 def avg_time():
     return sum(match['duration'] for match in matches) / len(matches)
 
+def avg_kda():
+    return sum(count_kd(m) for m in matches) / len(matches)
 
-
-print(f"Average KDA - { (count_kd(best_match) + count_kd(worst_match)) /2 :.2f}")
+print(f"Average KDA - { avg_kda():.2f}") 
 
 minutes, seconds = divmod(round(avg_time()), 60)
 
@@ -80,6 +101,4 @@ print(f"Avg match time - {minutes}:{seconds:02d} min")
 
 print("HERO K D A")
 for match in matches:
-    print(hero['localized_name'], match['kills'], match['deaths'], match['assists'])
-
-
+    print(hero['localized_name'], match['kills'], match['deaths'], match['assists']) #неправильно имя чара выводится
