@@ -1,39 +1,38 @@
-# check win\lose
-def is_radiant(match):
-    return match['player_slot'] < 128
+import pandas as pd
 
-def is_win(match):
-    return is_radiant(match) == match['radiant_win']
+#prepare data
+def build_df(matches, heroes):
+    df = pd.DataFrame(matches)
+    heroes_df = pd.DataFrame(heroes)[['id', 'localized_name']]
+
+
+    df = df.merge(heroes_df, how='left', left_on='hero_id', right_on='id')
+    df = df.drop(columns=['id', 'version'])
+
+
+
+    df['is_radiant'] = df['player_slot'] < 128 #check player side
+    df['is_win'] = df['is_radiant'] == df['radiant_win'] #win\lose
+
+    df['kda'] = (df['kills'] + df['assists'])/df['deaths'].clip(1)
+
+
+    return df
+
 
 # get winrate
-def count_wr(matches): #global winrate
-    if not matches:
+def count_wr(df): #global winrate
+    return df['is_win'].mean() * 100
+
+def wr_side(df, radiant): #winrate for side
+    side = df[df['is_radiant'] == radiant]
+    if side.empty:
         return 0
-    wins = sum(is_win(m) for m in matches)
-    return wins/ len(matches) * 100
-
-def wr_side(matches, radiant): #winrate for side
-    if not matches:
-        return 0
-
-    if radiant:
-        wr = sum(is_win(m) and is_radiant(m) for m in matches)
-        return wr/sum(is_radiant(m) for m in matches) * 100
-    else:
-        wr = sum(is_win(m) and not is_radiant(m) for m in matches)
-        return wr/sum(not is_radiant(m) for m in matches) * 100
+    return side['is_win'].mean() * 100
 
 
+def avg_time(df):#average match duration
+    return df['duration'].mean()
 
-# count KDA
-def count_kd(match):
-    kda = (match['kills'] + match['assists']) / max(match['deaths'], 1)
-
-    return kda
-
-
-def avg_time(matches):#average match duration
-    return sum(match['duration'] for match in matches) / len(matches)
-
-def avg_kda(matches):#average kda
-    return sum(count_kd(m) for m in matches) / len(matches)
+def avg_kda(df):#average kda
+    return df['kda'].mean()

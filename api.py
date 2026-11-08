@@ -6,7 +6,7 @@ def request_check(resp):
     if not resp.ok:
         raise SystemExit(f"Exception: {resp.status_code}")
 
-def get_data():
+def get_data(limit=100):
 
     load_dotenv()
     ACCOUNT_ID = os.getenv("DOTA_ACCOUNT_ID")
@@ -16,7 +16,7 @@ def get_data():
 
 
     try:
-        r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/recentMatches', timeout=10)
+        r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/matches', params={'limit': limit}, timeout=10)
         q = requests.get('https://api.opendota.com/api/heroes', timeout=10)
     except requests.exceptions.RequestException as e: 
         raise SystemExit(f"Network error: {e}")
