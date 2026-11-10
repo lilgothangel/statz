@@ -2,3 +2,4 @@
 .vscode
 dota.db
 __pycache__/
+.vscode/
