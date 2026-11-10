@@ -1,6 +1,9 @@
 from api import get_data
 import stats
 import pandas as pd
+import sqlite3
+import db
+
 
 pd.set_option('display.precision', 2)
 
@@ -32,11 +35,16 @@ def show_time(df):
     print(f"Avg match time - {minutes}:{seconds:02d} min")
 
 if __name__ == "__main__":
-    matches, heroes = get_data(20) #default - 100 matches. put in () another amount
+    conn = sqlite3.connect('dota.db')
+    db.create_tables(conn)
 
-    df = stats.build_df(matches, heroes)
+    matches, heroes = get_data() #default - 100 matches. put in () another amount
+    db.save_matches(conn, matches)
+    db.save_heroes(conn, heroes)
 
-    # print(df.round(2).head())
+
+    df = stats.build_df(conn, 20)
+    conn.close()
 
 
     show_winrate(df)

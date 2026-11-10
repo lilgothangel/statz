@@ -1,2 +1,4 @@
 .env
 .vscode
+dota.db
+__pycache__/

@@ -1,14 +1,23 @@
 import pandas as pd
 
 #prepare data
-def build_df(matches, heroes):
-    df = pd.DataFrame(matches)
-    heroes_df = pd.DataFrame(heroes)[['id', 'localized_name']]
+def build_df(conn, limit=-1):
+    # df = pd.DataFrame(matches)
+    # heroes_df = pd.DataFrame(heroes)[['id', 'localized_name']]
 
 
-    df = df.merge(heroes_df, how='left', left_on='hero_id', right_on='id')
-    df = df.drop(columns=['id', 'version'])
+    # df = df.merge(heroes_df, how='left', left_on='hero_id', right_on='id')
 
+    df = pd.read_sql("""
+        SELECT m.*, h.localized_name FROM matches m
+        LEFT JOIN heroes h ON m.hero_id = h.id
+        ORDER BY m.start_time DESC
+        LIMIT ?
+    """, conn, params=(limit,))
+
+    # df = df.drop(columns=['id', 'version'])
+
+    df['radiant_win'] = df['radiant_win'].astype(bool)
 
 
     df['is_radiant'] = df['player_slot'] < 128 #check player side
