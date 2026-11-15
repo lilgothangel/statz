@@ -43,10 +43,11 @@ if __name__ == "__main__":
     db.save_heroes(conn, heroes)
 
 
-    df = stats.build_df(conn, 20)
+    df = stats.build_df(conn, 100)
     conn.close()
 
+    # print(df[['kills', 'deaths', 'assists']].mean())
 
-    show_winrate(df)
-    show_kda(df)
-    show_time(df)
+    # show_winrate(df)
+    # show_kda(df)
+    # show_time(df)
