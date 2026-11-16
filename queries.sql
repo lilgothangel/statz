@@ -89,7 +89,7 @@ SELECT
 
 -- 3 player statistic per hero
 SELECT 
-    heroes.localized_name as hero,
+    heroes.localized_name AS hero,
     COUNT(*) AS games,
     SUM((player_slot < 128) = radiant_win) AS wins,
     ROUND(
@@ -102,8 +102,9 @@ SELECT
     ROUND(AVG((kills + assists) * 1.0 / MAX(deaths, 1)), 2) AS avg_kda
 
 FROM matches
-JOIN heroes on matches.hero_id = heroes.id
-GROUP BY heroes.id;
+JOIN heroes ON matches.hero_id = heroes.id
+GROUP BY heroes.id
+ORDER BY hero;
 
 -- 4 best heroes
 SELECT 
@@ -117,15 +118,15 @@ SELECT
     ROUND(AVG((kills + assists) * 1.0 / MAX(deaths, 1)), 2) AS avg_kda
 
 FROM matches
-JOIN heroes on matches.hero_id = heroes.id
+JOIN heroes ON matches.hero_id = heroes.id
 GROUP BY heroes.id
 HAVING COUNT(*) >=3
-ORDER BY winrate DESC
+ORDER BY winrate DESC, games ASC
 LIMIT 5;
 
 -- 5 statistics per week
 SELECT
-    strftime('%G-%V', start_time, 'unixepoch') as week,
+    strftime('%G-%V', start_time, 'unixepoch') AS week,
     COUNT(*) AS games,
     ROUND(
         100 * AVG((player_slot < 128) = radiant_win), 2
@@ -133,5 +134,84 @@ SELECT
     ROUND(AVG((kills + assists) * 1.0 / MAX(deaths, 1)), 2) AS avg_kda
 
 FROM matches
+GROUP BY week
+ORDER BY week;
+
+-- 6 winrate change after each game (window func)
+SELECT 
+    strftime('%Y-%m-%d', start_time, 'unixepoch') AS day,
+    (player_slot < 128) = radiant_win AS is_win,
+
+    SUM((player_slot < 128) = radiant_win) OVER(ORDER BY start_time) AS wins_so_far,
+
+    COUNT(*) OVER(ORDER BY start_time) AS games_so_far,
+
+    ROUND(
+        100.0 * SUM((player_slot < 128) = radiant_win) OVER(ORDER BY start_time) / COUNT(*) OVER(ORDER BY start_time), 2
+    ) AS cumulative_winrate
+FROM matches
+ORDER BY start_time;
+
+-- 6.5 better way to write ts
+SELECT
+    strftime('%Y-%m-%d', start_time, 'unixepoch') AS day,
+    (player_slot < 128) = radiant_win AS is_win,
+
+    SUM((player_slot < 128) = radiant_win) OVER w AS wins_so_far,
+    COUNT(*) OVER w AS games_so_far,
+
+    ROUND(
+        100.0 * SUM((player_slot < 128) = radiant_win) OVER w
+        / COUNT(*) OVER w,
+        2
+    ) AS cumulative_winrate
+
+FROM matches
+
+WINDOW w AS (
+    ORDER BY start_time
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+)
+
+ORDER BY start_time;
+
+-- 7 CTE (stats per hero)
+WITH match_stats AS(
+    SELECT 
+        strftime('%Y-%m', start_time, 'unixepoch') AS day,
+        hero_id,
+        ((player_slot < 128) = radiant_win) AS win,
+        (kills + assists) * 1.0 / MAX(deaths, 1) AS kda
+    FROM matches
+)
+
+SELECT 
+
+    heroes.localized_name AS hero,
+    COUNT(*) AS games,
+    SUM(win) AS wins,
+    ROUND(AVG(win) * 100.0, 2) AS winrate,
+    ROUND(AVG(kda), 2) AS avg_kda
+
+FROM match_stats
+JOIN heroes ON match_stats.hero_id = heroes.id
+GROUP BY hero_id;
+
+-- 7.2 just playing with CTE (stats per week)
+WITH week_stats AS(
+    SELECT 
+        strftime('%G-%V', start_time, 'unixepoch') AS week,
+        ((player_slot < 128) = radiant_win) AS is_win,
+        (kills + assists) * 1.0 / MAX(deaths, 1) AS kda
+    FROM matches
+)
+
+SELECT 
+    week,
+    COUNT(*) AS games,
+    SUM(is_win) AS wins,
+    ROUND(AVG(is_win) * 100.0, 2) AS winrate,
+    ROUND(AVG(kda), 2) AS avg_kda
+FROM week_stats
 GROUP BY week
 ORDER BY week;
