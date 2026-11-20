@@ -1,0 +1,105 @@
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+
+def plot_hero_winrate(df):
+    fig, ax = plt.subplots()
+
+    df = df.sort_values("winrate")
+
+    lable = df["hero"].astype(str) + "(" + df["games"].astype(str) + ")"
+
+    ax.barh(lable, df.winrate)
+    ax.axvline(x=50)
+
+    ax.set_title("Winrate by hero")
+    ax.set_xlabel("Winrate(%)")
+    ax.set_ylabel("Hero(games)")
+    ax.set_xlim(0, 100)
+
+    plt.savefig('output/hero_winrate.png', dpi=150, bbox_inches='tight')
+    # plt.show()
+    plt.close(fig)
+
+def plot_cumulative_wr(df, max_games=None):
+    fig, ax = plt.subplots()
+
+    ax.plot(df.games_so_far, df.cumulative_winrate)
+    ax.axhline(y=50)
+
+    ax.set_title("Cumulative Winrate")
+    ax.set_xlabel("Games")
+    ax.set_ylabel("Winrate(%)")
+
+    ax.set_xlim(1, max_games)
+    ax.set_ylim(0,100)
+
+    ax.xaxis.set_major_locator(MultipleLocator(1))
+
+    plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
+    plt.show()
+    plt.close(fig)
+
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+
+def plot_hero_winrate(df):
+    fig, ax = plt.subplots()
+
+    df = df.sort_values("winrate")
+
+    lable = df["hero"].astype(str) + "(" + df["games"].astype(str) + ")"
+
+    ax.barh(lable, df.winrate)
+    ax.axvline(x=50)
+
+    ax.set_title("Winrate by hero")
+    ax.set_xlabel("Winrate(%)")
+    ax.set_ylabel("Hero(games)")
+    ax.set_xlim(0, 100)
+
+    plt.savefig('output/hero_winrate.png', dpi=150, bbox_inches='tight')
+    # plt.show()
+    plt.close(fig)
+
+def plot_cumulative_wr(df, max_games=None):
+    fig, ax = plt.subplots()
+
+    ax.plot(df.games_so_far, df.cumulative_winrate)
+    ax.axhline(y=50)
+
+    ax.set_title("Cumulative Winrate")
+    ax.set_xlabel("Games")
+    ax.set_ylabel("Winrate(%)")
+
+    ax.set_xlim(1, max_games)
+    ax.set_ylim(0,100)
+
+    ax.xaxis.set_major_locator(MultipleLocator(1))
+
+    plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
+    # plt.show()
+    plt.close(fig)
+
+def plot_kda(df, max_games=None):
+    fig, ax = plt.subplots()
+
+    df_plot = df.head(max_games) if max_games else df
+    avg_kda = df_plot.kda.mean()
+
+    ax.scatter(df.index+1, df.kda)
+    ax.plot(df.index+1, df.kda)
+    ax.axhline(avg_kda, label=f"Average KDA: {avg_kda:.2f}")
+
+    ax.set_title("KDA per Match")
+    ax.set_xlabel("Games")
+    ax.set_ylabel("KDA")
+
+    ax.set_xlim(1, max_games)
+
+    ax.xaxis.set_major_locator(MultipleLocator(5))
+
+    ax.legend()
+
+    plt.savefig('output/kda.png', dpi=150, bbox_inches='tight')
+    plt.show()
+    plt.close(fig)

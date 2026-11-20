@@ -1,4 +1,6 @@
 import sqlite3
+import pandas as pd
+from pathlib import Path
 
 def create_tables(conn):
     conn.execute("""
@@ -52,3 +54,13 @@ def save_heroes(conn, heroes):
     """, rows)
 
     conn.commit()
+
+def run_query(conn, name):
+    root = Path(__file__).resolve().parent
+    sql_dir = root / "sql"
+    query_dir = sql_dir / f"{name}.sql"
+    query = query_dir.read_text(encoding="utf-8")
+
+    df = pd.read_sql_query(query, conn)
+
+    return df

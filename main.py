@@ -1,9 +1,10 @@
 from api import get_data
-import stats
 import pandas as pd
 import sqlite3
 import db
-
+import os
+import stats
+import charts
 
 pd.set_option('display.precision', 2)
 
@@ -35,15 +36,21 @@ def show_time(df):
     print(f"Avg match time - {minutes}:{seconds:02d} min")
 
 if __name__ == "__main__":
+    os.makedirs("output", exist_ok=True)
     conn = sqlite3.connect('dota.db')
     db.create_tables(conn)
 
-    matches, heroes = get_data() #default - 100 matches. put in () another amount
-    db.save_matches(conn, matches)
-    db.save_heroes(conn, heroes)
+    # matches, heroes = get_data() #default - 100 matches. put in () another amount
+    # db.save_matches(conn, matches)
+    # db.save_heroes(conn, heroes)
 
 
-    df = stats.build_df(conn, 100)
+    df_stats = stats.build_df(conn, 100) #get the stats from OpenDota
+
+    df_heroes = db.run_query(conn, "hero_stats")
+    df_cumulative = db.run_query(conn, "cumulative_wr")
+    df_matches = db.run_query(conn, "match_stats")
+
     conn.close()
 
     # print(df[['kills', 'deaths', 'assists']].mean())
@@ -51,3 +58,11 @@ if __name__ == "__main__":
     # show_winrate(df)
     # show_kda(df)
     # show_time(df)
+
+    # print(df_matches.head())
+    # print(df_heroes)
+
+
+    heroes_chart = charts.plot_hero_winrate(df_heroes)
+    cumulative_chart = charts.plot_cumulative_wr(df_cumulative, 20)
+    kda_chart = charts.plot_kda(df_matches, 20)
