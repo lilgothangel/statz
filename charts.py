@@ -101,5 +101,48 @@ def plot_kda(df, max_games=None):
     ax.legend()
 
     plt.savefig('output/kda.png', dpi=150, bbox_inches='tight')
+    # plt.show()
+    plt.close(fig)
+
+def plot_weekly(df):
+    fig, ax = plt.subplots()
+
+    ax.bar(df.week, df.winrate)
+
+    ax.set_title("Weekly Winrate")
+    ax.set_xlabel("Week")
+    ax.set_ylabel("Winrate (%)")
+
+    ax.set_ylim(0, 110)
+    ax.axhline(y=50)
+
+
+    plt.xticks(rotation=45, ha='right')
+    bars = ax.bar(df.week, df.winrate)
+    ax.bar_label(bars, padding=3)
+
+    plt.tight_layout()
+    plt.savefig('output/weekly.png', dpi=150, bbox_inches='tight')
+    # plt.show()
+    plt.close(fig)
+
+def plot_side_winrate(df):
+    fig, ax = plt.subplots()
+
+    bars = ax.bar(df.side, df.winrate)
+
+    ax.set_title("Radiant vs Dire Winrate")
+    ax.set_xlabel("Side")
+    ax.set_ylabel("Winrate (%)")
+
+    ax.set_ylim(0, 110)
+    ax.axhline(y=50)
+
+
+    ax.bar_label(bars, padding=3)
+
+
+    plt.tight_layout()
+    plt.savefig('output/side_winrate.png', dpi=150, bbox_inches='tight')
     plt.show()
     plt.close(fig)

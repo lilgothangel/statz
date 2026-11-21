@@ -50,6 +50,8 @@ if __name__ == "__main__":
     df_heroes = db.run_query(conn, "hero_stats")
     df_cumulative = db.run_query(conn, "cumulative_wr")
     df_matches = db.run_query(conn, "match_stats")
+    df_weekly = db.run_query(conn, "weekly")
+    df_side_wr = db.run_query(conn, "side_stats")
 
     conn.close()
 
@@ -66,3 +68,5 @@ if __name__ == "__main__":
     heroes_chart = charts.plot_hero_winrate(df_heroes)
     cumulative_chart = charts.plot_cumulative_wr(df_cumulative, 20)
     kda_chart = charts.plot_kda(df_matches, 20)
+    weekly_chart = charts.plot_weekly(df_weekly)
+    side_wr_chart = charts.plot_side_winrate(df_side_wr)
