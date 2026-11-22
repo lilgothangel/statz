@@ -8,8 +8,10 @@ def plot_hero_winrate(df):
 
     label = df["hero"].astype(str) + " (" + df["games"].astype(str) + ")"
 
-    ax.barh(label, df.winrate)
+    bars = ax.barh(label, df.winrate)
     ax.axvline(x=50, color='gray', linestyle='--')
+
+    ax.bar_label(bars, padding=3, fmt='%.1f')
 
     ax.set_title("Winrate by Hero (min 3 games)")
     ax.set_xlabel("Winrate(%)")
@@ -44,6 +46,7 @@ def plot_kda(df, max_games=None):
     fig, ax = plt.subplots()
 
     df_plot = df.head(max_games) if max_games else df
+    df_plot = df_plot.iloc[::-1]
     avg_kda = df_plot.kda.mean()
 
     ax.scatter(df_plot.index+1, df_plot.kda)
