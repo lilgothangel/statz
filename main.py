@@ -9,7 +9,7 @@ import charts
 
 pd.set_option('display.precision', 2)
 
-UPDATE_DATA = True #True - download new matches from OpenDota before analysis
+UPDATE_DATA = False #True - download new matches from OpenDota before analysis
 
 def show_winrate(df):
     print(f"Winrate: {stats.count_wr(df):.2f}%")
