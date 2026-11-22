@@ -15,4 +15,5 @@ SELECT
 FROM matches
 JOIN heroes ON matches.hero_id = heroes.id
 GROUP BY heroes.id
+HAVING COUNT(*) >= 3
 ORDER BY hero

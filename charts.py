@@ -6,14 +6,14 @@ def plot_hero_winrate(df):
 
     df = df.sort_values("winrate")
 
-    lable = df["hero"].astype(str) + "(" + df["games"].astype(str) + ")"
+    label = df["hero"].astype(str) + " (" + df["games"].astype(str) + ")"
 
-    ax.barh(lable, df.winrate)
-    ax.axvline(x=50)
+    ax.barh(label, df.winrate)
+    ax.axvline(x=50, color='gray', linestyle='--')
 
-    ax.set_title("Winrate by hero")
+    ax.set_title("Winrate by Hero (min 3 games)")
     ax.set_xlabel("Winrate(%)")
-    ax.set_ylabel("Hero(games)")
+    ax.set_ylabel("Hero (games)")
     ax.set_xlim(0, 100)
 
     plt.savefig('output/hero_winrate.png', dpi=150, bbox_inches='tight')
@@ -24,48 +24,7 @@ def plot_cumulative_wr(df, max_games=None):
     fig, ax = plt.subplots()
 
     ax.plot(df.games_so_far, df.cumulative_winrate)
-    ax.axhline(y=50)
-
-    ax.set_title("Cumulative Winrate")
-    ax.set_xlabel("Games")
-    ax.set_ylabel("Winrate(%)")
-
-    ax.set_xlim(1, max_games)
-    ax.set_ylim(0,100)
-
-    ax.xaxis.set_major_locator(MultipleLocator(1))
-
-    plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
-    # plt.show()
-    plt.close(fig)
-
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
-
-def plot_hero_winrate(df):
-    fig, ax = plt.subplots()
-
-    df = df.sort_values("winrate")
-
-    lable = df["hero"].astype(str) + "(" + df["games"].astype(str) + ")"
-
-    ax.barh(lable, df.winrate)
-    ax.axvline(x=50)
-
-    ax.set_title("Winrate by hero")
-    ax.set_xlabel("Winrate(%)")
-    ax.set_ylabel("Hero(games)")
-    ax.set_xlim(0, 100)
-
-    plt.savefig('output/hero_winrate.png', dpi=150, bbox_inches='tight')
-    # plt.show()
-    plt.close(fig)
-
-def plot_cumulative_wr(df, max_games=None):
-    fig, ax = plt.subplots()
-
-    ax.plot(df.games_so_far, df.cumulative_winrate)
-    ax.axhline(y=50)
+    ax.axhline(y=50, color='gray', linestyle='--')
 
     ax.set_title("Cumulative Winrate")
     ax.set_xlabel("Games")
@@ -79,6 +38,7 @@ def plot_cumulative_wr(df, max_games=None):
     plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)
+
 
 def plot_kda(df, max_games=None):
     fig, ax = plt.subplots()
@@ -122,7 +82,7 @@ def plot_weekly(df):
 
     plt.tight_layout()
     plt.savefig('output/weekly.png', dpi=150, bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.close(fig)
 
 def plot_side_winrate(df):
@@ -135,10 +95,10 @@ def plot_side_winrate(df):
     ax.set_ylabel("Winrate (%)")
 
     ax.set_ylim(0, 110)
-    ax.axhline(y=50)
+    ax.axhline(y=50, color='gray', linestyle='--')
 
 
-    ax.bar_label(bars, padding=3)
+    ax.bar_label(bars, padding=3, fmt='%.1f')
 
 
     plt.tight_layout()
