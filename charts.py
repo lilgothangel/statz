@@ -1,7 +1,8 @@
+import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-def plot_hero_winrate(df):
+def plot_hero_winrate(df, out_dir):
     fig, ax = plt.subplots()
 
     df = df.sort_values("winrate")
@@ -18,11 +19,11 @@ def plot_hero_winrate(df):
     ax.set_ylabel("Hero (games)")
     ax.set_xlim(0, 110)
 
-    plt.savefig('output/hero_winrate.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, 'hero_winrate.png'), dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)
 
-def plot_cumulative_wr(df, max_games=None):
+def plot_cumulative_wr(df, out_dir, max_games=None):
     fig, ax = plt.subplots()
 
     ax.plot(df.games_so_far, df.cumulative_winrate)
@@ -37,12 +38,12 @@ def plot_cumulative_wr(df, max_games=None):
 
     ax.xaxis.set_major_locator(MultipleLocator(10))
 
-    plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, 'cumulative_winrate.png'), dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)
 
 
-def plot_kda(df, max_games=None):
+def plot_kda(df, out_dir, max_games=None):
     fig, ax = plt.subplots()
 
     df_plot = df.head(max_games) if max_games else df
@@ -63,11 +64,11 @@ def plot_kda(df, max_games=None):
 
     ax.legend()
 
-    plt.savefig('output/kda.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, 'kda.png'), dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)
 
-def plot_weekly(df):
+def plot_weekly(df, out_dir):
     fig, ax = plt.subplots()
 
     week_label = df.week.astype(str) + ' (' + df.games.astype(str) + ')'
@@ -84,11 +85,11 @@ def plot_weekly(df):
     ax.bar_label(bars, padding=3, fmt='%.1f')
 
     plt.tight_layout()
-    plt.savefig('output/weekly.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, 'weekly.png'), dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)
 
-def plot_side_winrate(df):
+def plot_side_winrate(df, out_dir):
     fig, ax = plt.subplots()
 
     bars = ax.bar(df.side, df.winrate)
@@ -105,6 +106,6 @@ def plot_side_winrate(df):
 
 
     plt.tight_layout()
-    plt.savefig('output/side_winrate.png', dpi=150, bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, 'side_winrate.png'), dpi=150, bbox_inches='tight')
     # plt.show()
     plt.close(fig)

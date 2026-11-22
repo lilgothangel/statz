@@ -1,4 +1,18 @@
+# secrets
 .env
-dota.db
+
+# virtual environment
+.venv/
+
+# python cache
 __pycache__/
+
+# editor settings
 .vscode/
+
+# local databases
+*.db
+
+# charts: keep only my account for README
+output/*
+!output/<твой id>/

@@ -1,24 +1,15 @@
-import requests 
-import os
-from dotenv import load_dotenv
+import requests
 
 def request_check(resp):
     if not resp.ok:
         raise SystemExit(f"Exception: {resp.status_code}")
 
-def get_data(limit=100):
-
-    load_dotenv()
-    ACCOUNT_ID = os.getenv("DOTA_ACCOUNT_ID")
-
-    if not ACCOUNT_ID:
-        raise ValueError("DOTA_ACCOUNT_ID не найден в .env")
-
+def get_data(account_id, limit=100):
 
     try:
-        r = requests.get(f'https://api.opendota.com/api/players/{ACCOUNT_ID}/matches', params={'limit': limit}, timeout=10)
+        r = requests.get(f'https://api.opendota.com/api/players/{account_id}/matches', params={'limit': limit}, timeout=30)
         q = requests.get('https://api.opendota.com/api/heroes', timeout=10)
-    except requests.exceptions.RequestException as e: 
+    except requests.exceptions.RequestException as e:
         raise SystemExit(f"Network error: {e}")
 
 
