@@ -115,6 +115,7 @@ statz/
 
 - **`UPDATE_DATA`** in `main.py`: `True` downloads new matches before the analysis, `False` works only with the local database.
 - **Another account:** change `DOTA_ACCOUNT_ID` in `.env` and run again. A separate database and charts folder will be created for it; your own data stays untouched.
+- **`SHOW_SUMMARY`** / **`SUMMARY_MATCHES`** in `main.py`: print a short stats summary to the console and choose how many latest matches it covers.
 
 ## Possible improvements
 
