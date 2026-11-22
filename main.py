@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
 
     heroes_chart = charts.plot_hero_winrate(df_heroes)
-    cumulative_chart = charts.plot_cumulative_wr(df_cumulative, 20)
+    cumulative_chart = charts.plot_cumulative_wr(df_cumulative, 100)
     kda_chart = charts.plot_kda(df_matches, 20)
     weekly_chart = charts.plot_weekly(df_weekly)
     side_wr_chart = charts.plot_side_winrate(df_side_wr)

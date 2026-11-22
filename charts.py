@@ -36,7 +36,7 @@ def plot_cumulative_wr(df, max_games=None):
     ax.xaxis.set_major_locator(MultipleLocator(1))
 
     plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.close(fig)
 
 import matplotlib.pyplot as plt
@@ -74,7 +74,7 @@ def plot_cumulative_wr(df, max_games=None):
     ax.set_xlim(1, max_games)
     ax.set_ylim(0,100)
 
-    ax.xaxis.set_major_locator(MultipleLocator(1))
+    ax.xaxis.set_major_locator(MultipleLocator(10))
 
     plt.savefig('output/cumulative_winrate.png', dpi=150, bbox_inches='tight')
     # plt.show()
@@ -86,8 +86,8 @@ def plot_kda(df, max_games=None):
     df_plot = df.head(max_games) if max_games else df
     avg_kda = df_plot.kda.mean()
 
-    ax.scatter(df.index+1, df.kda)
-    ax.plot(df.index+1, df.kda)
+    ax.scatter(df_plot.index+1, df_plot.kda)
+    ax.plot(df_plot.index+1, df_plot.kda)
     ax.axhline(avg_kda, label=f"Average KDA: {avg_kda:.2f}")
 
     ax.set_title("KDA per Match")
@@ -107,23 +107,22 @@ def plot_kda(df, max_games=None):
 def plot_weekly(df):
     fig, ax = plt.subplots()
 
-    ax.bar(df.week, df.winrate)
+    week_label = df.week.astype(str) + ' (' + df.games.astype(str) + ')'
+    bars = ax.bar(week_label, df.winrate)
 
     ax.set_title("Weekly Winrate")
     ax.set_xlabel("Week")
     ax.set_ylabel("Winrate (%)")
 
     ax.set_ylim(0, 110)
-    ax.axhline(y=50)
-
+    ax.axhline(y=50, color='gray', linestyle='--')
 
     plt.xticks(rotation=45, ha='right')
-    bars = ax.bar(df.week, df.winrate)
-    ax.bar_label(bars, padding=3)
+    ax.bar_label(bars, padding=3, fmt='%.1f')
 
     plt.tight_layout()
     plt.savefig('output/weekly.png', dpi=150, bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.close(fig)
 
 def plot_side_winrate(df):
@@ -144,5 +143,5 @@ def plot_side_winrate(df):
 
     plt.tight_layout()
     plt.savefig('output/side_winrate.png', dpi=150, bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.close(fig)

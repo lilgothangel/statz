@@ -6,3 +6,4 @@ SELECT
     ROUND((kills + assists) * 1.0 / MAX(deaths, 1), 2) AS kda,
     ROUND(duration/60.0, 2) AS duration_min
 FROM matches
+ORDER BY start_time DESC;
