@@ -15,4 +15,4 @@ __pycache__/
 
 # charts: keep only my account for README
 output/*
-!output/<твой id>/
+!output/1069051564/
