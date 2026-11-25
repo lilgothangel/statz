@@ -54,6 +54,7 @@ Oldest match on the left, most recent on the right.
 - **SQL** — `JOIN`, `GROUP BY` / `HAVING`, `CASE WHEN`, window functions, CTEs
 - **pandas** — data preparation and metrics
 - **matplotlib** — charts
+- **Databricks / Spark SQL / PySpark** — the same analysis reproduced on a big-data platform
 
 ## How it works
 
@@ -95,6 +96,7 @@ statz/
 ├── charts.py         # matplotlib charts
 ├── main.py           # entry point, settings (UPDATE_DATA)
 ├── sql/              # one analysis query per file
+├── databricks/       # Spark SQL + PySpark notebooks, CSV export, charts
 ├── queries.sql       # SQL sandbox
 ├── output/<id>/      # generated charts for each account
 ├── dota_<id>.db      # local database for each account (not in the repo)

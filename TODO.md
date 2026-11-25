@@ -1,38 +1,45 @@
 # TODO — Dota 2 Stats Tracker
 
-## 1. Починить то, что есть
-- [V] Fix `count_kd`: `match['deaths', 1]` → `max(match['deaths'], 1)` (сейчас падает с KeyError)
-- [V] Перенести проверку `if not ACCOUNT_ID` ДО запросов к API
-- [V] Переписать логику radiant/dire: сначала определить сторону (`player_slot < 128` → radiant, иначе dire), потом win/lose — одной функцией `is_win(match)`
-- [V] Проверять `r.status_code` и обрабатывать ошибки API (таймаут, 429, пустой ответ)
-- [V] Удалить закомментированный старый код
+## 1. Fix what already exists
+- [x] Fix `count_kd`: `match['deaths', 1]` → `max(match['deaths'], 1)` (crashed with KeyError)
+- [x] Move the `if not ACCOUNT_ID` check BEFORE the API requests
+- [x] Rewrite the radiant/dire logic: first detect the side (`player_slot < 128` → radiant, otherwise dire), then win/lose — in one function `is_win(match)`
+- [x] Check `r.status_code` and handle API errors (timeout, 429, empty response)
+- [x] Remove old commented-out code
 
-## 2. Доделать метрики
-- [V] Добавить героя к best/worst KDA
-- [V] Добавить средний KDA
-- [V] Винрейт по героям (игры, победы, WR%)
-- [V] Средние kills / deaths / assists, GPM, XPM
-- [V] Винрейт за radiant vs dire
+## 2. Finish the metrics
+- [x] Add the hero to best/worst KDA
+- [x] Add average KDA
+- [x] Winrate by hero (games, wins, WR%)
+- [x] Average kills / deaths / assists
+- [ ] GPM / XPM (not returned by `/matches` by default — needs the `project` parameter)
+- [x] Radiant vs Dire winrate
 
-## 3. Перевести на pandas
-- [V] Загрузить матчи в DataFrame, смёрджить с героями по `hero_id`
-- [V] Все метрики из п.2 посчитать через pandas (groupby, agg) вместо циклов
-- [V] Перейти с `/recentMatches` (20 игр) на `/matches?limit=100+`, чтобы было что анализировать
+## 3. Move to pandas
+- [x] Load matches into a DataFrame, merge with heroes on `hero_id`
+- [x] Calculate all metrics from block 2 with pandas (groupby, agg) instead of loops
+- [x] Switch from `/recentMatches` (20 games) to `/matches?limit=100+` to have enough data to analyze
 
-## 4. Добавить SQL
-- [V] Сохранять матчи и героев в SQLite (`matches`, `heroes`)
-- [V] Не дублировать уже сохранённые матчи (PRIMARY KEY по `match_id`)
-- [V] Вынести основные метрики в SQL-запросы (`queries.sql`): WR по героям, топ-5 героев, динамика по неделям
-- [V] Хотя бы один запрос с JOIN, один с GROUP BY + HAVING, один с оконной функцией
+## 4. Add SQL
+- [x] Store matches and heroes in SQLite (`matches`, `heroes`)
+- [x] Don't duplicate already saved matches (PRIMARY KEY on `match_id`)
+- [x] Move the main metrics into SQL queries (`sql/*.sql`): WR by hero, top heroes, weekly dynamics
+- [x] At least one query with JOIN, one with GROUP BY + HAVING, one with a window function
 
-## 5. Визуализация
-- [V] Графики (matplotlib): винрейт по героям, KDA по времени, распределение длительности матчей
-- [V] Сохранять графики в `output/`
-- [V] (бонус) Дашборд в Tableau Public на выгруженном CSV
+## 5. Visualization
+- [x] Charts (matplotlib): winrate by hero, cumulative winrate, KDA over time, side winrate, weekly winrate
+- [x] Save charts to `output/`
+- [ ] Match duration distribution chart
+- [ ] (bonus) Dashboard in Tableau Public on exported CSV
 
-## 6. Оформление для портфолио
-- [ ] Разбить код на модули: `api.py`, `db.py`, `analysis.py`, `charts.py`, `main.py`
-- [ ] `requirements.txt`
-- [ ] README на английском: что делает, стек, как запустить, скриншоты графиков, 2–3 вывода («лучший WR на герое X — 68% за 40 игр»)
-- [ ] Описание репо и Pin в профиле
-- [ ] Обновить строку в CV: стек → `Python (pandas), SQL (SQLite), matplotlib, REST API`
+## 6. Portfolio polish
+- [x] Split the code into modules: `api.py`, `db.py`, `stats.py`, `charts.py`, `main.py`
+- [x] `requirements.txt`
+- [x] README in English: what it does, stack, how to run, chart screenshots, key findings
+- [ ] Repo description and pin on the profile
+
+## 7. Extra features
+- [x] Multiple accounts: separate database and charts folder for each account ID
+- [x] `UPDATE_DATA` flag to work offline with the local database
+- [x] Short stats summary in the console (`SHOW_SUMMARY`)
+- [x] Databricks version: Spark SQL and PySpark notebooks, results cross-checked against SQLite + pandas
