@@ -74,6 +74,17 @@ OpenDota API → api.py → SQLite (db.py) → SQL queries (sql/*.sql) → panda
 - **Hero stats** filtered with `HAVING COUNT(*) >= 3` to drop small samples.
 - **KDA** computed safely with `MAX(deaths, 1)` (no division by zero) and `* 1.0` (no integer division).
 
+## Databricks version
+
+The same analysis reproduced in Databricks: Spark SQL queries and the PySpark DataFrame API, with results cross-checked against the SQLite + pandas version.
+Data is exported from the local SQLite database with [`databricks/export_csv.py`](databricks/export_csv.py) and uploaded to Databricks as tables.
+
+- [`databricks/dota_sql_analysis.ipynb`](databricks/dota_sql_analysis.ipynb) — Spark SQL notebook
+- [`databricks/dota_pyspark.ipynb`](databricks/dota_pyspark.ipynb) — PySpark notebook
+
+![Weekly winrate in Databricks](databricks/dbx_weekly.png)
+![Cumulative winrate in Databricks](databricks/dbx_cumulative_winrate.png)
+
 ## Project structure
 
 ```

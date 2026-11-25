@@ -16,3 +16,4 @@ __pycache__/
 # charts: keep only my account for README
 output/*
 !output/1069051564/
+*.csv
